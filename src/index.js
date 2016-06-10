@@ -1,4 +1,4 @@
 /* @flow */
 
-import Lobby from './lobby'
-export default Lobby
+const Lobby = require('./lobby')
+module.exports = Lobby;

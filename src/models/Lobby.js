@@ -1,12 +1,16 @@
 /* @flow */
 
-const { type, r, createModel } = require('../util/thinky.js')
+// thinky.createModel needs to be called as thinky.createModel, nust just
+// createModel. For some reason
+const thinky = require('../util/thinky.js'),
+      r = thinky.r,
+      type = thinky.type;
 
 type User =  {
   id: string
 }
 
-const Lobby = createModel("Lobby", {
+const Lobby = thinky.createModel("Lobby", {
   id: type.string(),
   members: [{
     id: type.string(),
@@ -15,7 +19,7 @@ const Lobby = createModel("Lobby", {
     joinTime: type.date(),
     assignedRoom: type.string()
   }]
-}).removeExtra();
+})
 
 Lobby.assignRoom = (roomId: string, users: Array<User>): Promise => {
   return r.expr(users)
