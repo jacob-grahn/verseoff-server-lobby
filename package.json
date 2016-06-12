@@ -4,9 +4,10 @@
   "description": "Matchmaking for Verseoff",
   "main": "index.js",
   "scripts": {
-    "test": "mocha --compilers js:babel-register",
+    "test": "mocha --compilers js:babel-register src/**/*.spec.js",
     "build": "babel src --out-dir lib",
-    "watch": "babel src --out-dir lib --watch"
+    "watch": "babel src --out-dir lib --watch",
+    "mocha": "mocha"
   },
   "repository": {
     "type": "git",
@@ -20,7 +21,7 @@
   "homepage": "https://github.com/Jiggmin/verseoff-server-lobby#readme",
   "dependencies": {
     "lodash": "^4.13.1",
-    "thinky": "^2.3.2"
+    "thinky": "2.3.2"
   },
   "devDependencies": {
     "babel-cli": "^6.9.0",

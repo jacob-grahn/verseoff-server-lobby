@@ -1,10 +1,12 @@
 /* @flow */
 
-const { expect, use } = require("chai");
+const chai = require("chai");
 const chaiAsPromised = require("chai-as-promised");
 const { r } = require('../util/thinky')
 const Lobby = require('./Lobby')
-use(chaiAsPromised);
+
+chai.use(chaiAsPromised);
+
 
 describe("Lobby model", () => {
 
