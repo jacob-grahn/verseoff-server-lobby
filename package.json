@@ -7,7 +7,9 @@
     "test": "mocha --compilers js:babel-register src/**/*.spec.js",
     "build": "babel src --out-dir lib",
     "watch": "babel src --out-dir lib --watch",
-    "mocha": "mocha"
+    "mocha": "mocha",
+    "startdb": "docker-compose up -d",
+    "stopdb": "docker-compose down"
   },
   "repository": {
     "type": "git",

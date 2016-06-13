@@ -10,8 +10,8 @@ chai.use(chaiAsPromised);
 
 describe("Lobby model", () => {
 
-  beforeEach(done => {{
-    r.table('lobby').update(
+  beforeEach(function() {{
+    return r.table('lobby').update(
       {id: 'test-lobby', members: [
         {id: 'u1', assignedRoom: 'none'},
         {id: 'u2', assignedRoom: 'none'},
@@ -19,12 +19,10 @@ describe("Lobby model", () => {
         {id: 'u4', assignedRoom: 'none'},
       ]}
     ).run()
-    .then(done)
   }})
 
-  afterEach(done => {
-    r.table('lobby').delete('test-lobby')
-    .then(done)
+  afterEach(function() {
+    return r.table('lobby').delete('test-lobby')
   })
 
   it("gets users who have an assignedRoom of 'none'", function () {

@@ -10,7 +10,7 @@ type User =  {
   id: string
 }
 
-const Lobby = thinky.createModel("Lobby", {
+const Lobby = thinky.createModel("lobby", {
   id: type.string(),
   members: [{
     id: type.string(),
