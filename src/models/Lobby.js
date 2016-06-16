@@ -1,37 +1,44 @@
 /* @flow */
 
-// thinky.createModel needs to be called as thinky.createModel, nust just
-// createModel. For some reason
-const thinky = require('../util/thinky.js'),
-      r = thinky.r,
-      type = thinky.type;
+const { r, db } = require('./util/db')
+const lobbyTable = r.table('lobby')
 
 type User =  {
   id: string
 }
 
-const Lobby = thinky.createModel("lobby", {
-  id: type.string(),
+type LobbyTableContnet = {
+  id: string,
   members: [{
-    id: type.string(),
-    language: type.string(),
-    friends: [type.string()],
-    joinTime: type.date(),
-    assignedRoom: type.string()
+    id: string,
+    language: string,
+    friends: [string],
+    joinTime: Date,
+    assignedRoom: string
   }]
-})
-
-Lobby.assignRoom = (roomId: string, users: Array<User>): Promise => {
-  return r.expr(users)
-  .forEach(user => {
-    return Lobby.get(user.id)
-    .update({assignedRoom: roomId})
-  })
-  .run()
 }
 
-Lobby.getWaitingMembers = (): Promise => {
-  return Lobby.filter({assignedRoom: 'none'}).run()
+class Lobby {
+
+  lobbyId: string
+
+  constructor (lobbyId: string): void => {
+    this.lobbyId = lobbyId
+  }
+
+  assignRoom (roomId: string, users: Array<User>): Promise => {
+    return r.expr(users)
+    .forEach(user => {
+      return lobbyTable.get(user.id)
+      .update({assignedRoom: roomId})
+    })
+    .run()
+  }
+
+  getWaitingMembers (): Promise => {
+    return lobbyTable.filter({assignedRoom: 'none'}).run()
+  }
 }
+
 
 module.exports = Lobby;

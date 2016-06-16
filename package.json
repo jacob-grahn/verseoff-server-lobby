@@ -23,7 +23,7 @@
   "homepage": "https://github.com/Jiggmin/verseoff-server-lobby#readme",
   "dependencies": {
     "lodash": "^4.13.1",
-    "thinky": "2.3.2"
+    "rethinkdbdash": "^2.3.8"
   },
   "devDependencies": {
     "babel-cli": "^6.9.0",
