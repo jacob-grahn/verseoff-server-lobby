@@ -2,7 +2,7 @@
 
 const chai = require("chai");
 const chaiAsPromised = require("chai-as-promised")
-const Lobby = require('./Lobby')
+const Lobby = require('./lobby')
 const { r, db } = require('../util/db')
 
 chai.use(chaiAsPromised);

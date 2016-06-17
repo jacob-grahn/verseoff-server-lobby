@@ -1,4 +1,4 @@
 /* @flow */
 
-const Lobby = require('./lobby')
-module.exports = Lobby;
+const Matchmaker = require('./matchmaker')
+module.exports = Matchmaker;

@@ -1,15 +1,8 @@
 /* @flow */
 
 const _ = require('lodash');
-const LobbyModel = require('./models/Lobby.js');
-
-type User = {
-  id: string,
-  language: string,
-  friends: Array<string>,
-  joinTime: Date,
-  happiness: number
-}
+const Lobby = require('./tables/lobby');
+import type User from './user';
 type Room = Array<User>;
 
 // weights for competing goals
@@ -22,7 +15,7 @@ const maxWaitSeconds = 10;
 const startThreshold = 200;
 const fullRoom = 10;
 
-class Lobby {
+class Matchmaker {
 
   id: string;
 
@@ -33,7 +26,7 @@ class Lobby {
 }
 
 function matchmake (lobbyId: string): void {
-  LobbyModel.getWaitingMembers(lobbyId)
+  Lobby.getWaitingMembers(lobbyId)
   .then((users: Array<User>) => {
     _.sortBy(users, calcHappiness);
     users.splice(0, fullRoom);
@@ -49,7 +42,7 @@ function makeRoomId (): string {
 
 function startRoom (users: Array<User>) {
   const roomId = makeRoomId();
-  LobbyModel.assignRoom(roomId, users);
+  Lobby.assignRoom(roomId, users);
 }
 
 function calcHappiness(user: User, room: Room): number {
