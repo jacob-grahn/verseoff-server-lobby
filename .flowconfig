@@ -3,9 +3,6 @@
 [include]
 
 [libs]
-declare function describe () {};
-declare function beforeEach () {};
-declare function afterEach () {};
-declare function it () {};
+decls
 
 [options]
