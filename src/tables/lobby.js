@@ -1,18 +1,20 @@
 /* @flow */
 
+const LOBBY_TABLE_NAME = 'lobby';
 const { r, db } = require('../util/db')
-const lobbyTable = r.table('lobby')
+const lobbyTable = r.table(LOBBY_TABLE_NAME)
 import type User from '../user'
+
+db.tableCreate(LOBBY_TABLE_NAME).run()
+.catch(err => console.log(`table ${LOBBY_TABLE_NAME} already exists`))
 
 type LobbyTableContnet = {
   id: string,
-  members: [{
-    id: string,
-    language: string,
-    friends: [string],
-    joinTime: Date,
-    assignedRoom: string
-  }]
+  lobbyId: string,
+  language: string,
+  friends: [string],
+  joinTime: Date,
+  assignedRoom: string
 }
 
 const Lobby = {
@@ -20,17 +22,14 @@ const Lobby = {
   getWaitingMembers
 }
 
-function assignRoom (roomId: string, users: Array<User>): Promise {
-  return r.expr(users)
-  .forEach(user => {
-    return lobbyTable.get(user.id)
-    .update({assignedRoom: roomId})
-  })
-  .run()
+function assignRoom (users: Array<User>, roomId: string): Promise {
+  const userIds = users.map(user => user.id)
+  return lobbyTable.getAll(...userIds)
+  .update({assignedRoom: roomId})
 }
 
-function getWaitingMembers (): Promise {
-  return lobbyTable.filter({assignedRoom: 'none'}).run()
+function getWaitingMembers (lobbyId: string): Promise {
+  return lobbyTable.filter({lobbyId, assignedRoom: 'none'}).run()
 }
 
 

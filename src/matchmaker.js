@@ -42,7 +42,7 @@ function makeRoomId (): string {
 
 function startRoom (users: Array<User>) {
   const roomId = makeRoomId();
-  Lobby.assignRoom(roomId, users);
+  Lobby.assignRoom(users, roomId);
 }
 
 function calcHappiness(user: User, room: Room): number {
