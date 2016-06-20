@@ -18,10 +18,23 @@ const fullRoom = 10;
 class Matchmaker {
 
   id: string;
+  interval: any;
 
-  constructor(id: string = 'default'): void {
+  constructor (id: string = 'default'): void {
     this.id = id
-    setTimeout(() => matchmake(this.id), 1000)
+  }
+
+  start (time: number = 100): void {
+    this.stop();
+    this.interval = setInterval(() => matchmake(this.id), time)
+    matchmake(this.id);
+  }
+
+  stop ():void {
+    if(this.interval) {
+      stopInterval(this.interval);
+      delete this.interval;
+    }
   }
 }
 
@@ -96,3 +109,5 @@ function averageHappiness(room: Room): number {
   average = total / room.length;
   return average;
 }
+
+module.exports = Matchmaker;
