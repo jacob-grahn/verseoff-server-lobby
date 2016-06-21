@@ -1,13 +1,14 @@
 /* @flow */
 
-const chai = require("chai");
-const chaiAsPromised = require("chai-as-promised")
+const sinon = require('sinon')
+const chai = require("chai")
 const expect = chai.expect
+const chaiAsPromised = require("chai-as-promised")
 const Matchmaker = require('./matchmaker')
 const Lobby = require('./tables/lobby')
-const lobbyId = 'LobbyId1';
-let matchmaker, users;
-import type User from './user';
+const lobbyId = 'LobbyId1'
+let matchmaker, users, clock
+import type User from './user'
 
 chai.use(chaiAsPromised);
 
@@ -26,23 +27,33 @@ describe("matchmaker", () => {
 
     Lobby.getWaitingMembers = function(id): Promise {
       if(id === lobbyId) {
-        return Promise.resolve(users);
+        return Promise.resolve(users)
       }
-      return Promise.resolve([]);
+      return Promise.resolve([])
     }
 
     Lobby.assignRoom = function(users: Array<User>, roomId: string): Promise {
-      return Promise.resolve(true);
+      return Promise.resolve(true)
     }
+
+    clock = sinon.useFakeTimers()
   })
 
   afterEach(function () {
     matchmaker.stop()
+    clock.restore()
   })
 
-  it("matches at an interval", function () {
+  it("matches at an interval", sinon.test(function () {
+    const mock = this.mock(Lobby).expects('getWaitingMembers').once();
     matchmaker.start(25)
-  })
+
+    clock.tick(24);
+    expect(mock.notCalled).toBe(true);
+
+    clock.tick(1);
+    expect(mock.calledOnce).toBe(true);
+  }))
 
   it("matches people with the same language", function () {
 
