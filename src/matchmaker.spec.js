@@ -12,6 +12,8 @@ import type User from './user'
 
 chai.use(chaiAsPromised);
 
+console.log('matchmaker.spec exists!!!!!!!!');
+
 
 describe("matchmaker", () => {
 
@@ -25,7 +27,7 @@ describe("matchmaker", () => {
       {id: 'u5'}
     ]
 
-    Lobby.getWaitingMembers = function(id): Promise {
+    /*Lobby.getWaitingMembers = function(id): Promise {
       if(id === lobbyId) {
         return Promise.resolve(users)
       }
@@ -34,7 +36,7 @@ describe("matchmaker", () => {
 
     Lobby.assignRoom = function(users: Array<User>, roomId: string): Promise {
       return Promise.resolve(true)
-    }
+    }*/
 
     clock = sinon.useFakeTimers()
   })
@@ -44,22 +46,27 @@ describe("matchmaker", () => {
     clock.restore()
   })
 
-  it("matches at an interval", sinon.test(function () {
-    const mock = this.mock(Lobby).expects('getWaitingMembers').once();
+  it("matches at an interval", function () {
+    const stub = sinon.stub(Lobby, 'getWaitingMembers');
+    stub.returns(Promise.resolve([]));
+
     matchmaker.start(25)
+    expect(stub.callCount).to.equal(1);
 
     clock.tick(24);
-    expect(mock.notCalled).toBe(true);
+    expect(stub.callCount).to.equal(1);
 
     clock.tick(1);
-    expect(mock.calledOnce).toBe(true);
-  }))
+    expect(stub.callCount).to.equal(2);
+
+    stub.restore();
+  })
 
   it("matches people with the same language", function () {
 
   })
 
-  it("matches people who are friends", function () {
+  /*it("matches people who are friends", function () {
 
   })
 
@@ -69,5 +76,5 @@ describe("matchmaker", () => {
 
   it("has a maximum wait time", function () {
 
-  })
+  })*/
 })

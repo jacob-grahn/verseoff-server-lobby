@@ -4,7 +4,7 @@
   "description": "Matchmaking for Verseoff",
   "main": "index.js",
   "scripts": {
-    "test": "mocha --compilers js:babel-register src/**/*.spec.js",
+    "test": "mocha --compilers js:babel-register src/*.spec.js",
     "build": "babel src --out-dir lib",
     "watch": "babel src --out-dir lib --watch",
     "mocha": "mocha",

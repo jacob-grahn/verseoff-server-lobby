@@ -32,7 +32,7 @@ class Matchmaker {
 
   stop ():void {
     if(this.interval) {
-      stopInterval(this.interval);
+      clearInterval(this.interval);
       delete this.interval;
     }
   }
