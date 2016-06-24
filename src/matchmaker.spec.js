@@ -12,13 +12,11 @@ import type User from './user'
 
 chai.use(chaiAsPromised);
 
-console.log('matchmaker.spec exists!!!!!!!!');
-
 
 describe("matchmaker", () => {
 
   beforeEach(function () {
-    matchmaker = new Matchmaker(lobbyId)
+    matchmaker = new Matchmaker({id: lobbyId})
     users = [
       {id: 'u1'},
       {id: 'u2'},
@@ -26,17 +24,6 @@ describe("matchmaker", () => {
       {id: 'u4'},
       {id: 'u5'}
     ]
-
-    /*Lobby.getWaitingMembers = function(id): Promise {
-      if(id === lobbyId) {
-        return Promise.resolve(users)
-      }
-      return Promise.resolve([])
-    }
-
-    Lobby.assignRoom = function(users: Array<User>, roomId: string): Promise {
-      return Promise.resolve(true)
-    }*/
 
     clock = sinon.useFakeTimers()
   })
