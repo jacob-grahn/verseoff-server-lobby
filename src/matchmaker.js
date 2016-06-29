@@ -36,7 +36,7 @@ class Matchmaker {
   start (time: number = 100): void {
     this.stop();
     this.interval = setInterval(() => matchmake(this.settings), time)
-    matchmake(this.settings);
+    matchmake(this.settings)
   }
 
   stop ():void {
@@ -45,15 +45,22 @@ class Matchmaker {
       delete this.interval;
     }
   }
+
+  runOnce (): Promise {
+    return matchmake(this.settings)
+  }
 }
 
-function matchmake (settings: MatchmakerSettings): void {
-  Lobby.getWaitingMembers(settings.id)
+function matchmake (settings: MatchmakerSettings): Promise {
+  return Lobby.getWaitingMembers(settings.id)
   .then((users: Array<User>) => {
-    _.sortBy(users, calcHappiness);
-    users.splice(0, settings.fullRoom);
-    if(averageHappiness(users) > settings.startThreshold) {
-      startRoom(users);
+    for(let user of users) {
+      user.happiness = calcHappiness(user, users, settings)
+    }
+    users.sort((a, b) => b.happiness - a.happiness)
+    const room: Array<User> = users.splice(0, settings.fullRoom)
+    if(averageHappiness(room) > settings.startThreshold) {
+      startRoom(room)
     }
   })
 }
@@ -63,17 +70,17 @@ function makeRoomId (): string {
 }
 
 function startRoom (users: Array<User>) {
-  const roomId = makeRoomId();
-  Lobby.assignRoom(users, roomId);
+  const roomId = makeRoomId()
+  const result = Lobby.assignRoom(users, roomId)
 }
 
 function calcHappiness(user: User, room: Room, settings: MatchmakerSettings): number {
-  user.happiness = 0;
-  user.happiness += calcHappinessFromFriends(user, room, settings.fullRoom);
-  user.happiness += calcHappinessFromFullRoom(user, room, settings.fullRoom);
-  user.happiness += calcHappinessFromLanguage(user, room, settings.fullRoom);
-  user.happiness += calcHappinessFromBoredom(user, settings.maxWaitSeconds);
-  return user.happiness;
+  var happiness = 0;
+  happiness += calcHappinessFromFriends(user, room, settings.fullRoom);
+  happiness += calcHappinessFromFullRoom(user, room, settings.fullRoom);
+  happiness += calcHappinessFromLanguage(user, room, settings.fullRoom);
+  happiness += calcHappinessFromBoredom(user, settings.maxWaitSeconds);
+  return happiness;
 }
 
 function calcHappinessFromFriends (user: User, room: Room, fullRoom: number): number {

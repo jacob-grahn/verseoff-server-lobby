@@ -10,18 +10,18 @@ chai.use(chaiAsPromised);
 const expect = chai.expect;
 
 
-describe("table: Lobby", () => {
+describe("table: Lobby", function () {
 
-  beforeEach(function() {{
+  beforeEach(function () {
     return r.table('lobby').insert([
       {id: 'u1', lobbyId: LOBBY_ID, assignedRoom: 'none'},
       {id: 'u2', lobbyId: LOBBY_ID, assignedRoom: 'none'},
       {id: 'u3', lobbyId: LOBBY_ID, assignedRoom: 'r1'},
       {id: 'u4', lobbyId: LOBBY_ID, assignedRoom: 'none'},
     ]).run()
-  }})
+  })
 
-  afterEach(function() {
+  afterEach(function () {
     return r.table('lobby').delete()
   })
 

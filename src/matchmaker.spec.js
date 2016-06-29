@@ -3,54 +3,63 @@
 const sinon = require('sinon')
 const chai = require("chai")
 const expect = chai.expect
-const chaiAsPromised = require("chai-as-promised")
-const Matchmaker = require('./matchmaker')
 const Lobby = require('./tables/lobby')
+const Matchmaker = require('./matchmaker')
 const lobbyId = 'LobbyId1'
-let matchmaker, users, clock
+let matchmaker, users
 import type User from './user'
 
-chai.use(chaiAsPromised);
 
-
-describe("matchmaker", () => {
+describe("matchmaker", function () {
 
   beforeEach(function () {
-    matchmaker = new Matchmaker({id: lobbyId})
+    matchmaker = new Matchmaker({
+      id: lobbyId,
+      fullRoom: 2,
+      startThreshold: 0
+    })
     users = [
-      {id: 'u1'},
-      {id: 'u2'},
-      {id: 'u3'},
-      {id: 'u4'},
-      {id: 'u5'}
+      {id: 'u1', language: 'fr', joinTime: new Date()},
+      {id: 'u2', language: 'en', joinTime: new Date()},
+      {id: 'u3', language: 'sp', joinTime: new Date()},
+      {id: 'u4', language: 'ge', joinTime: new Date()}
     ]
-
-    clock = sinon.useFakeTimers()
   })
 
   afterEach(function () {
-    matchmaker.stop()
-    clock.restore()
   })
 
-  it("matches at an interval", function () {
-    const stub = sinon.stub(Lobby, 'getWaitingMembers');
-    stub.returns(Promise.resolve([]));
+  it("matches at an interval", sinon.test(function () {
+    const gwm = this.stub(Lobby, 'getWaitingMembers');
+    gwm.returns(Promise.resolve([]));
 
     matchmaker.start(25)
-    expect(stub.callCount).to.equal(1);
+    expect(gwm.callCount).to.equal(1);
 
-    clock.tick(24);
-    expect(stub.callCount).to.equal(1);
+    this.clock.tick(24);
+    expect(gwm.callCount).to.equal(1);
 
-    clock.tick(1);
-    expect(stub.callCount).to.equal(2);
+    this.clock.tick(1);
+    expect(gwm.callCount).to.equal(2);
 
-    stub.restore();
-  })
+    matchmaker.stop()
+  }))
 
   it("matches people with the same language", function () {
+    users[0].language = 'zz'
+    users[2].language = 'zz'
+    const gwm = sinon.stub(Lobby, 'getWaitingMembers').returns(Promise.resolve(users))
+    const ar = sinon.stub(Lobby, 'assignRoom').returns(true)
 
+    return matchmaker.runOnce()
+    .then(() => {
+      const args = ar.getCall(0).args
+      expect(args[0][0].id).to.equal('u1')
+      expect(args[0][1].id).to.equal('u3')
+      expect(typeof args[1]).to.equal('string')
+      ar.restore()
+      gwm.restore()
+    })
   })
 
   /*it("matches people who are friends", function () {
