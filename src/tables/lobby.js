@@ -23,7 +23,6 @@ const Lobby = {
 }
 
 function assignRoom (users: Array<User>, roomId: string): Promise {
-  console.log('the real assign room was called');
   const userIds = users.map(user => user.id)
   return lobbyTable.getAll(...userIds)
   .update({assignedRoom: roomId})

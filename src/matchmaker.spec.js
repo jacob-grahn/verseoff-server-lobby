@@ -19,10 +19,10 @@ describe("matchmaker", function () {
       startThreshold: 0
     })
     users = [
-      {id: 'u1', language: 'fr', joinTime: new Date()},
-      {id: 'u2', language: 'en', joinTime: new Date()},
-      {id: 'u3', language: 'sp', joinTime: new Date()},
-      {id: 'u4', language: 'ge', joinTime: new Date()}
+      {id: 'u0', language: 'fr', joinTime: new Date(), friends: []},
+      {id: 'u1', language: 'en', joinTime: new Date(), friends: []},
+      {id: 'u2', language: 'sp', joinTime: new Date(), friends: []},
+      {id: 'u3', language: 'ge', joinTime: new Date(), friends: []}
     ]
   })
 
@@ -54,19 +54,31 @@ describe("matchmaker", function () {
     return matchmaker.runOnce()
     .then(() => {
       const args = ar.getCall(0).args
-      expect(args[0][0].id).to.equal('u1')
-      expect(args[0][1].id).to.equal('u3')
-      expect(typeof args[1]).to.equal('string')
       ar.restore()
       gwm.restore()
+      expect(args[0][0].id).to.equal('u0')
+      expect(args[0][1].id).to.equal('u2')
+      expect(typeof args[1]).to.equal('string')
     })
   })
 
-  /*it("matches people who are friends", function () {
+  it("matches people who are friends", function () {
+    users[0].friends = ['u3']
+    users[3].friends = ['u0']
+    const gwm = sinon.stub(Lobby, 'getWaitingMembers').returns(Promise.resolve(users))
+    const ar = sinon.stub(Lobby, 'assignRoom').returns(Promise.resolve(true))
 
+    return matchmaker.runOnce()
+    .then(() => {
+      const args = ar.getCall(0).args
+      ar.restore()
+      gwm.restore()
+      expect(args[0][0].id).to.equal('u0')
+      expect(args[0][1].id).to.equal('u3')
+    })
   })
 
-  it("has a maximum room size", function () {
+  /*it("has a maximum room size", function () {
 
   })
 

@@ -84,31 +84,34 @@ function calcHappiness(user: User, room: Room, settings: MatchmakerSettings): nu
 }
 
 function calcHappinessFromFriends (user: User, room: Room, fullRoom: number): number {
-  if(!user.fiends) {
+  if(!user.friends || user.friends.length === 0) {
     return 0;
   }
   let friends = 0;
   for (let otherUser: User of room) {
-    if(user !== otherUser && user.friends.indexOf(otherUser.id) !== -1) {
-      friends++;
+    if(user.id === otherUser.id) {
+      continue
+    }
+    if(user.friends.indexOf(otherUser.id) !== -1) {
+      friends++
     }
   }
-  return friends * wantFriends / fullRoom;
+  return friends * wantFriends / fullRoom
 }
 
 function calcHappinessFromLanguage (user: User, room: Room, fullRoom: number): number {
   let sameLanguage: number = 0;
   for(let otherUser: User of room) {
     if(user !== otherUser && otherUser.language === user.language) {
-      sameLanguage++;
+      sameLanguage++
     }
   }
-  return sameLanguage * wantSameLanguage / fullRoom;
+  return sameLanguage * wantSameLanguage / fullRoom
 }
 
 function calcHappinessFromFullRoom (user: User, room: Room, fullRoom: number): number {
-  const roomSize = Math.min(room.length, fullRoom);
-  return roomSize * wantFullRoom / fullRoom;
+  const roomSize = Math.min(room.length, fullRoom)
+  return roomSize * wantFullRoom / fullRoom
 }
 
 function calcHappinessFromBoredom (user: User, maxWaitSeconds: number): number {
