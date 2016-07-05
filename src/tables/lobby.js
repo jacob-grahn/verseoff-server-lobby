@@ -6,7 +6,7 @@ const lobbyTable = r.table(LOBBY_TABLE_NAME)
 import type User from '../user'
 
 db.tableCreate(LOBBY_TABLE_NAME).run()
-.catch(err => console.log(`table ${LOBBY_TABLE_NAME} already exists`))
+.catch(err => {})
 
 type LobbyTableContnet = {
   id: string,

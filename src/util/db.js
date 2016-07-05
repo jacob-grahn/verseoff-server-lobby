@@ -4,6 +4,6 @@ const r = require('rethinkdbdash')({servers})
 const db = r.db(DB_NAME)
 
 r.dbCreate(DB_NAME).run()
-.catch(err => console.log(`db ${DB_NAME} already exists`))
+.catch(err => {})
 
 module.exports = {db, r};

@@ -2,12 +2,12 @@
 
 const sinon = require('sinon')
 const chai = require("chai")
-const expect = chai.expect
 const Lobby = require('./tables/lobby')
 const Matchmaker = require('./matchmaker')
 const lobbyId = 'LobbyId1'
-let matchmaker, users
 import type User from './user'
+let matchmaker, users, _Promise
+const expect = chai.expect
 
 
 describe("matchmaker", function () {
@@ -16,7 +16,8 @@ describe("matchmaker", function () {
     matchmaker = new Matchmaker({
       id: lobbyId,
       fullRoom: 2,
-      startThreshold: 0
+      startThreshold: 100,
+      maxWaitSeconds: 10
     })
     users = [
       {id: 'u0', language: 'fr', joinTime: new Date(), friends: []},
@@ -78,11 +79,33 @@ describe("matchmaker", function () {
     })
   })
 
-  /*it("has a maximum room size", function () {
+  it("has a maximum room size", function () {
+    const gwm = sinon.stub(Lobby, 'getWaitingMembers').returns(Promise.resolve(users))
+    const ar = sinon.stub(Lobby, 'assignRoom').returns(Promise.resolve(true))
 
+    return matchmaker.runOnce()
+    .then(() => {
+      const args = ar.getCall(0).args
+      ar.restore()
+      gwm.restore()
+      expect(args[0].length).to.equal(2)
+    })
   })
 
-  it("has a maximum wait time", function () {
+  it("match will start if members have waited a long time", function () {
+    const user = users[0]
+    user.joinTime = new Date( new Date().getTime() - 30000 )
+    const lonelyUsers = [user]
+    const gwm = sinon.stub(Lobby, 'getWaitingMembers')
+    .returns(Promise.resolve(lonelyUsers))
+    const ar = sinon.stub(Lobby, 'assignRoom')
+    .returns(Promise.resolve(true))
 
-  })*/
+    return matchmaker.runOnce()
+    .then(() => {
+      expect(ar.callCount).to.equal(1)
+      gwm.restore()
+      ar.restore()
+    })
+  })
 })

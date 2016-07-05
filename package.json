@@ -4,9 +4,10 @@
   "description": "Matchmaking for Verseoff",
   "main": "index.js",
   "scripts": {
-    "test": "mocha --compilers js:babel-register --recursive src",
+    "test": "docker-compose start db && sleep 5 && mocha --compilers js:babel-register --recursive src && docker-compose stop db",
+    "test-watch": "docker-compose up -d && sleep 5 && mocha --compilers js:babel-register --recursive --watch src",
     "build": "babel src --out-dir lib",
-    "watch": "babel src --out-dir lib --watch",
+    "build-watch": "babel src --out-dir lib --watch",
     "mocha": "mocha",
     "startdb": "docker-compose up -d",
     "stopdb": "docker-compose down"
@@ -23,7 +24,7 @@
   "homepage": "https://github.com/Jiggmin/verseoff-server-lobby#readme",
   "dependencies": {
     "lodash": "^4.13.1",
-    "rethinkdbdash": "^2.3.12"
+    "rethinkdbdash": "^2.3.14"
   },
   "devDependencies": {
     "babel-cli": "^6.9.0",

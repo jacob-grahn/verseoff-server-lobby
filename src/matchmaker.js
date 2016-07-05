@@ -7,19 +7,17 @@ import type User from './user'
 type Room = Array<User>
 type MatchmakerSettings = {
   id: string,
-  maxWaitSeconds: number,
   startThreshold: number,
   fullRoom: number
 }
 
 // weights for competing goals
 const wantFullRoom: number = 100
-const wantNoWait: number = 100
+const wantShortWait: number = 100
 const wantSameLanguage: number = 100
 const wantFriends: number = 100
 const defaultSettings: MatchmakerSettings = {
   id: 'default',
-  maxWaitSeconds: 10,
   startThreshold: 200,
   fullRoom: 10
 }
@@ -76,10 +74,10 @@ function startRoom (users: Array<User>) {
 
 function calcHappiness(user: User, room: Room, settings: MatchmakerSettings): number {
   var happiness = 0;
-  happiness += calcHappinessFromFriends(user, room, settings.fullRoom);
-  happiness += calcHappinessFromFullRoom(user, room, settings.fullRoom);
-  happiness += calcHappinessFromLanguage(user, room, settings.fullRoom);
-  happiness += calcHappinessFromBoredom(user, settings.maxWaitSeconds);
+  happiness += calcHappinessFromFriends(user, room, settings.fullRoom)
+  happiness += calcHappinessFromFullRoom(user, room, settings.fullRoom)
+  happiness += calcHappinessFromLanguage(user, room, settings.fullRoom)
+  happiness += calcHappinessFromBoredom(user)
   return happiness;
 }
 
@@ -114,9 +112,11 @@ function calcHappinessFromFullRoom (user: User, room: Room, fullRoom: number): n
   return roomSize * wantFullRoom / fullRoom
 }
 
-function calcHappinessFromBoredom (user: User, maxWaitSeconds: number): number {
-  const secondsWaited = Math.round((new Date() - user.joinTime) / 1000);
-  return secondsWaited * wantNoWait / maxWaitSeconds;
+function calcHappinessFromBoredom (user: User): number {
+  const curTime: number = new Date().getTime()
+  const joinTime: number = user.joinTime.getTime()
+  const secondsWaited: number = (curTime - joinTime) / 1000
+  return secondsWaited / 10 * wantShortWait
 }
 
 function averageHappiness(room: Room): number {
